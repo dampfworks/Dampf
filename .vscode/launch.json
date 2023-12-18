@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Run Client",
+        "type": "java",
+        "request": "launch",
+        "mainClass": "net.minecraftforge.userdev.LaunchTesting",
+        "args": ["--version", "1.16.3", "--tweakClass", "net.minecraftforge.fml.common.launcher.FMLTweaker"],
+        "projectName": "dampg",
+        "preLaunchTask": "genEclipseRuns",
+        "resolveClasspath": "workspace",
+        "classpath": [
+          "${workspaceFolder}/build/classes/java/main",
+          "${workspaceFolder}/build/resources/main",
+          "${workspaceFolder}/libs/*",
+          "${user.home}/.gradle/caches/forge_gradle/bundeled_repo/net/minecraftforge/forge/1.16.3-34.1.0/forge-1.16.3-34.1.0-universal.jar"
+        ]
+      }
+    ]
+  }
+  

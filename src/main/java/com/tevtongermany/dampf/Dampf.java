@@ -2,6 +2,7 @@ package com.tevtongermany.dampf;
 
 import com.codedisaster.steamworks.SteamAPI;
 import com.codedisaster.steamworks.SteamException;
+import com.codedisaster.steamworks.SteamGameServerAPI;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -43,6 +44,7 @@ public class Dampf
     public void loadSteamAPI() {
         try {
             SteamAPI.loadLibraries();
+            SteamGameServerAPI.loadLibraries();
             if (!SteamAPI.init()) {
                 logger.error("SteamAPI init failed");
             } else {
@@ -60,10 +62,8 @@ public class Dampf
 
         logger = event.getModLog();
         new Handler();
-        keybinds.init();
         createSteamAppId();
         loadSteamAPI();
-
     }
 
 

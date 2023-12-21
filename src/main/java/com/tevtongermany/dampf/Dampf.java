@@ -1,9 +1,6 @@
 package com.tevtongermany.dampf;
 
-import com.codedisaster.steamworks.SteamAPI;
-import com.codedisaster.steamworks.SteamException;
-import com.codedisaster.steamworks.SteamGameServerAPI;
-import net.minecraft.init.Blocks;
+import com.codedisaster.steamworks.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,6 +15,7 @@ import java.io.IOException;
 @Mod(modid = Dampf.MODID, name = Dampf.NAME, version = Dampf.VERSION)
 public class Dampf
 {
+    // Minecraft Mod
     public static final String MODID = "dampf";
     public static final String NAME = "Dampf";
     public static final String VERSION = "1.0";
@@ -28,7 +26,27 @@ public class Dampf
         return logger;
     }
 
-    public void createSteamAppId() {
+    // Steam API
+
+    private SteamUserStats stats;
+
+    private SteamFriends friends;
+
+    public SteamUserStats getStats() {
+        return stats;
+    }
+
+    public SteamFriends getFriends() {
+        return friends;
+    }
+
+    public void loadFriendsInterface(){
+        SteamFriendsCallback callback = new DampfFriends();
+
+        friends = new SteamFriends(callback);
+    }
+
+    private void createSteamAppId() {
         File steamappid = new File("steam_appid.txt");
         if (!steamappid.exists()) {
             try {
@@ -37,25 +55,35 @@ public class Dampf
                 writer.write("480");
                 writer.close();
             } catch (IOException e) {
-                logger.error("Failed to create steam_appid.txt", e);
+                logger.info("Failed to create steam_appid.txt", e);
             }
         }
     }
-    public void loadSteamAPI() {
+
+    private void loadSteamInterface(){
+        SteamUserStatsCallback callback = new DampfInterface();
+
+        stats = new SteamUserStats(callback);
+
+    }
+
+    private void loadSteamAPI() {
         try {
             SteamAPI.loadLibraries();
             SteamGameServerAPI.loadLibraries();
             if (!SteamAPI.init()) {
-                logger.error("SteamAPI init failed");
+                logger.info("SteamAPI init failed");
             } else {
                 logger.info("SteamAPI init success");
             }
+
         } catch (SteamException e) {
-            logger.error("SteamAPI init failed", e);
+            logger.info("SteamAPI init failed", e);
 
         }
     }
-    
+
+    // Minecraft Handlers
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -64,25 +92,26 @@ public class Dampf
         new Handler();
         createSteamAppId();
         loadSteamAPI();
+        loadSteamInterface();
+        loadFriendsInterface();
     }
 
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        logger.info("Pre initializing");
-        logger.info("Initializing");
-        // some example code
-        logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        logger.info("Initialized");
 
 
     }
-
     @EventHandler 
     public void shutdown(FMLInitializationEvent event)
     {
         logger.info("Shutting down steam");
         SteamAPI.shutdown();
+        stats.dispose();
+        friends.dispose();
+
         logger.info("Shutting down");
     }
 
